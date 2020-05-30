@@ -17,7 +17,7 @@ class IntlPhoneField extends StatefulWidget {
   final FocusNode focusNode;
   final Function onSubmitted;
 
-  /// 2 Letter ISO Code
+  /// Country Code (e.g 65)
   final String initialCountryCode;
   final InputDecoration decoration;
   final TextStyle style;
@@ -53,9 +53,10 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
   void initState() {
     super.initState();
     if (widget.initialCountryCode != null) {
-      _selectedCountry = countries
-          .where((item) => item['code'] == widget.initialCountryCode)
-          .toList()[0];
+      _selectedCountry = countries.where((item) {
+        final countryCode = '+' + widget.initialCountryCode;
+        return item['dial_code'] == countryCode;
+      }).toList()[0];
     }
   }
 
