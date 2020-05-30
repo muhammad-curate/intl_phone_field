@@ -37,7 +37,11 @@ class IntlPhoneField extends StatefulWidget {
     this.validator,
     this.onChanged,
     this.onSaved,
-  });
+  }) {
+    if (this.selectedCountryCode == null) {
+      this.selectedCountryCode = '+93';
+    }
+  }
 
   @override
   _IntlPhoneFieldState createState() => _IntlPhoneFieldState();
