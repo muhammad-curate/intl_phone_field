@@ -72,12 +72,18 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
                 TextField(
                   decoration: InputDecoration(
                     suffixIcon: Icon(Icons.search),
-                    labelText: 'Search by Country Name',
+                    labelText: 'Search by Country Name or Code',
                   ),
                   onChanged: (value) {
                     setState(() {
                       filteredCountries = countries.where((country) {
-                        return country['name'].toLowerCase().contains(value);
+                        final matchesCountryName = country['name']
+                            .toLowerCase()
+                            .contains(value.toLowerCase());
+                        final matchesCountryCode = country['dial_code']
+                            .toLowerCase()
+                            .contains(value.toLowerCase());
+                        return matchesCountryName || matchesCountryCode;
                       }).toList();
                     });
                   },
