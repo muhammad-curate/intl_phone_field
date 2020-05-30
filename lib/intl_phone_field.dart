@@ -17,13 +17,13 @@ class IntlPhoneField extends StatefulWidget {
   final FocusNode focusNode;
   final Function onSubmitted;
 
-  /// Country Code (e.g 65)
-  final String initialCountryCode;
+  /// Country Code (e.g +65)
+  String selectedCountryCode;
   final InputDecoration decoration;
   final TextStyle style;
 
   IntlPhoneField({
-    this.initialCountryCode,
+    this.selectedCountryCode = '+93',
     this.obscureText = false,
     this.textAlign = TextAlign.left,
     this.onPressed,
@@ -44,21 +44,7 @@ class IntlPhoneField extends StatefulWidget {
 }
 
 class _IntlPhoneFieldState extends State<IntlPhoneField> {
-  Map<String, dynamic> _selectedCountry =
-      countries.where((item) => item['code'] == 'AF').toList()[0];
-
   List<dynamic> filteredCountries = countries;
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.initialCountryCode != null) {
-      _selectedCountry = countries.where((item) {
-        final countryCode = '+' + widget.initialCountryCode;
-        return item['dial_code'] == countryCode;
-      }).toList()[0];
-    }
-  }
 
   Future<void> _changeCountry() async {
     filteredCountries = countries;
@@ -111,13 +97,8 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
                             style: TextStyle(fontWeight: FontWeight.w700),
                           ),
                           onTap: () {
-                            _selectedCountry = countries
-                                .where(
-                                  (country) =>
-                                      country['code'] ==
-                                      filteredCountries[index]['code'],
-                                )
-                                .toList()[0];
+                            widget.selectedCountryCode =
+                                filteredCountries[index]['dial_code'];
                             Navigator.of(context).pop();
                           },
                         ),
@@ -138,8 +119,15 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
     setState(() {});
   }
 
+  Map<String, dynamic> countryForCode(String countryCode) {
+    return countries.where((item) {
+      return item['dial_code'] == countryCode;
+    }).toList()[0];
+  }
+
   @override
   Widget build(BuildContext context) {
+    final selectedCountry = countryForCode(widget.selectedCountryCode);
     return Row(
       children: <Widget>[
         InkWell(
@@ -149,7 +137,7 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  _selectedCountry['flag'],
+                  selectedCountry['flag'],
                   style: TextStyle(fontSize: 30),
                 ),
                 SizedBox(
@@ -157,7 +145,7 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
                 ),
                 FittedBox(
                   child: Text(
-                    _selectedCountry['dial_code'],
+                    selectedCountry['dial_code'],
                     style: TextStyle(fontWeight: FontWeight.w700),
                   ),
                 ),
@@ -180,13 +168,13 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
             onSaved: (value) {
               widget.onSaved(
                 PhoneNumber(
-                    countryCode: _selectedCountry['dial_code'], number: value),
+                    countryCode: selectedCountry['dial_code'], number: value),
               );
             },
             onChanged: (value) {
               widget.onChanged(
                 PhoneNumber(
-                    countryCode: _selectedCountry['dial_code'], number: value),
+                    countryCode: selectedCountry['dial_code'], number: value),
               );
             },
             validator: widget.validator,

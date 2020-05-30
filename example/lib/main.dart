@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
                     borderSide: BorderSide(),
                   ),
                 ),
-                initialCountryCode: '65',
+                selectedCountryCode: '+65',
                 onChanged: (phone) {
                   print(phone.completeNumber);
                 },
